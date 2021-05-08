@@ -1,32 +1,44 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+      <div class="d-flex align-center">
+         <v-icon x-large left>
+            mdi-file-table
+          </v-icon>
+        <v-toolbar-title>
+         
+          <h1>
+          D_Sheet
+          </h1>
+
+        </v-toolbar-title>
+        
+      </div>
+
+     
+    
+    </v-app-bar>
+
+    <v-main>
     <router-view/>
-  </div>
+     
+    </v-main>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
 
-#nav {
-  padding: 30px;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+export default {
+  name: 'App',
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+  
+  data: () => ({
+    //
+  }),
+};
+</script>
