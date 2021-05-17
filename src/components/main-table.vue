@@ -32,7 +32,7 @@
                 dense
                 :value="item.item[b]"
                outlined
-                
+                :rules="[value=> value!=='__proto__'|| 'This name is not allowed']"
                 v-model="item.item[b]"
               />
 

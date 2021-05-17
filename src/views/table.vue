@@ -28,7 +28,7 @@
             Column Name: 
               </v-col>
               <v-col>
-            <v-text-field dense solo label="Column name" v-model="newHeader.text" />
+            <v-text-field dense solo label="Column name" v-model="newHeader.text" :rules="rule" />
               </v-col>
           </v-row>
           <v-row>
@@ -128,7 +128,7 @@
 
 <script>
 
-//import HelloWorld from '@/components/HelloWorld.vue'
+
 import maintable from '@/components/main-table.vue'
 import dialog1 from '@/components/dialog1.vue'
 
@@ -160,6 +160,7 @@ export default {
     return {
       opts: ['hi','bye'],
       sortable: 1,
+      rule: [value=> value!=='__proto__'|| 'This name is not allowed'],
       
       newHeader: {}
 
@@ -174,11 +175,11 @@ export default {
         link.href = URL.createObjectURL(blob)
         link.download = 'sheet.csv'
         link.click()
-     // document.body.appendChild(a);
+     
     },
     createcsv(){
 
-      // console.log(this.$store.getters.titles)
+      
 
       return this.$store.commit('createcsv',this.$store.getters.titles)
 

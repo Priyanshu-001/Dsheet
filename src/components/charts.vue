@@ -3,6 +3,7 @@
 <div>
     <canvas id="chart"></canvas>
   </div>
+
   ChartType(s) : {{this.chartType}}
   
 </v-container>
@@ -41,12 +42,17 @@ export default {
              return  this.$store.getters.lables
           return this.$store.getters.labels2
            },
+        
         index(){
-            return this.$store.state.index
+            return this.$store.getters.index
         },
-      
+        dataSet(){
+            if(this.axis == 0)
+            return this.$store.getters.plotData2(this.index,this.chartType)
+            return this.$store.getters.plotData(this.index,this.chartType)
+        },
         charData(){
-                return { type: 'bar', options: {...this.opts},data: {labels: [...this.labels] ,datasets: [ ...this.$store.getters.plotData2(this.$store.state.index,this.chartType)]}}
+                return { type: 'bar', options: {...this.opts},data: {labels: [...this.labels] ,datasets: [ ...this.dataSet]}}
                 
             }
     },
@@ -55,14 +61,18 @@ this.$emit('axis',0)
     },
     beforeUpdate(){
         this.chart.destroy()
+        
     },
     mounted(){
         const ctx = document.getElementById('chart')
         this.chart = new Chart(ctx,this.charData)
+        
     },
     updated(){
        const ctx = document.getElementById('chart')
         this.chart = new Chart(ctx,this.charData)
+        
+
     },
     
    

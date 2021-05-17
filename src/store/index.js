@@ -10,53 +10,30 @@ export default new Vuex.Store({
     configData: {},
     index: null,
     doneParsing: true,
-    label2Type: [],
     colorObj: {},
-    // headers: [
-      
-    //   {
-    //     text: 'name',
-    //     align: 'start',
-    //     sortable: false,
-    //     value: 'name',
-    //   },
-    //   { text: 'calories', value: 'calories' },
-    //   { text: 'fat', value: 'fat' },
-    //   { text: 'carbs', value: 'carbs' },
-    //   { text: 'protein', value: 'protein' },
-    //   { text: 'iron', value: 'iron' },
-    // ],
+    graphReady: true,
     colorArray: [],
     csv: "",
-    // entries: [
-    //   {
-    //     name: 'Frozen Yogurt',
-    //     calories: 159,
-    //     fat: 6.0,
-    //     carbs: 24,
-    //     protein: 4.0,
-    //     iron: 1,
-    //   },
-    //   {
-    //     name: 'Ice cream sandwich',
-    //     calories: 237,
-    //     fat: 9.0,
-    //     carbs: 37,
-    //     protein: 4.3,
-    //     iron: 2,
-    //   },
-    // ],
     headers: [],
     entries: []
   },
   mutations: {
-   
+    blank: (state)=>{
+      state.configData={},
+      state.index=null,
+      state.graphReady=true,
+      state.colorArray=[],
+      state.csv= "",
+      state.doneParsing=true
+      state.headers=[],
+      state.entries = []
+    },
     csv2json: (state,csv)=>{
       let rows = csv.split("\r\n")
       let first =true
       let entries = []
       rows.forEach(r=>{
-        console.log(r)
+       
         let row= r.split(',')
         if(first)
       {
@@ -77,6 +54,7 @@ export default new Vuex.Store({
       }})
       state.entries = JSON.parse(JSON.stringify(entries))
       state.doneParsing = true
+      state.index=null
     
     },
     notDoneParsing:(state,val=false)=>{
@@ -92,6 +70,9 @@ export default new Vuex.Store({
         state.entries.push({})
     },
     addHeader: (s,newHeader)=>{
+      if(newHeader.val=='__proto__' || newHeader.text=="__proto__"){
+        return ''
+      }
       s.headers.push(newHeader)
       if (s.index===null){
 
@@ -124,11 +105,14 @@ export default new Vuex.Store({
       state.csv = final_csv
     },
     getConfigReady: (state,[labels,chartTypes])=>{
-
+      state.graphReady=false
       for(let label of labels)
       { if (!(label in state.configData))
         state.configData[label]=chartTypes[Math.floor(Math.random()*chartTypes.length)]
       }
+     
+      state.graphReady = true
+
      
     },
     patchColorObj(state,[val,label]){
@@ -159,13 +143,13 @@ export default new Vuex.Store({
     },
     lables: state=>{
       
-      return state.entries.map(obj=>{return obj[state.index] || 'empty label'})
+      return state.entries.map(obj=>{ if(obj[state.index]!='__proto__') { return obj[state.index] || 'empty label'}})
     },
     allowedHeaders: (state)=>{
       return state.headers
     },
     labels2: (state,getters)=>{
-      return getters.titles.filter(el=>el!=state.index)
+      return getters.titles.filter(el=>el!=state.index  )
     },
     titles:state=>{
       return state.headers.map(obj=> {return obj.value} )
@@ -191,6 +175,9 @@ export default new Vuex.Store({
     },
     colorObj: (state)=>{
       return state.colorObj
+    },
+    names: state=>{
+      return state.colorObj.keys()
     },
     
     plotData2: (state,getters)=>(index,chartType=['bar'])=>{
@@ -220,8 +207,12 @@ export default new Vuex.Store({
         {
           point['type']='line'
         }
+        if(point['label']!='__proto__')
+        {
         dataSet.push(point)
+        }
       })
+      
       return dataSet
     },
     plotData: (state,getters)=>(index,chartType=['line'])=>{

@@ -44,9 +44,10 @@
         </v-tab>
 
         </v-tabs>
+        
         <v-row>
             <v-col>
-        <dialog1 ref="dialog1" Dialog_Title = "Configure Chart">
+        <dialog1 ref="dialog1" Dialog_Title = "Configure Chart" :key="componentKey">
         <template v-slot:activationIcon>
             <v-icon>
                 mdi-cog
@@ -54,17 +55,17 @@
             
         </template>
         <template  v-slot>
-             <h3>
-                Axis
-            </h3>
-            <br>
+             
+            
             <v-row>
                 <v-col cols=8>
+                   <h3>
                     Axis
+                  </h3>
                 </v-col>
 
                 <v-col cols=2>
-                    <v-select dense :items="[1,0]" v-model="axis">
+                    <v-select dense :items="[1,0]" v-model="axis"  >
                     </v-select>
                 </v-col>
             </v-row>
@@ -72,18 +73,28 @@
                 Colors
             </h3>
             <br>
-            <template v-for="(label,i) of series">
-                <v-row :key=i>
+         
+            
+            <template v-if="graphReady">
+              
+            <template v-for="(label,i) of series" >
+                
+                <v-row :key=i >
+                   
                     <v-col>
+                        
                         {{label}}
                     </v-col>
                     <v-spacer/>
                     <v-col>
-                       <colorDialog  :value="colorObj[label]" :label="label">
+                       <colorDialog :key="componentKey" :value="colorObj[label]" :label="label">
 
                        </colorDialog>
                     </v-col>
                 </v-row>
+
+                
+            </template>
             </template>
 
         </template>
@@ -119,12 +130,12 @@
         </v-row>
        
         <v-card>
-        <plot :key="componentKey" :chartType="chartType" ref="ci">
+        <plot :key="componentKey" :chartType="chartType" :axis="axis" ref="ci">
         </plot>
         
         </v-card>
       
-    
+   
     </v-container>
     
 </template>
@@ -151,7 +162,9 @@ export default {
     },
     watch: {
         axis(){
+                
                 this.$store.commit('getConfigReady',[this.series,this.chartTypes])
+
                 this.componentKey+=1
         },
         
@@ -159,9 +172,12 @@ export default {
             
             console.log('rerendering the graph')
             this.componentKey+=1
+            console.log('color Obj changed')
         }
     },
     computed: {
+      
+        names(){return this.$store.getters.names },
         colorObj(){
             return this.$store.getters.colorObj
         },
@@ -183,6 +199,9 @@ export default {
             
             
         },
+        graphReady() {
+            return this.$store.state.graphReady
+        },
         chartTypeTemplate(){
             let ty =[]
             for(let a in this.configData)
@@ -200,9 +219,7 @@ export default {
         patch(val,label){
            this.$store.commit('patchConfig',[val,label])
         },
-        testing(){
-            console.log("hiiiii")
-        }
+       
         
     },
     components: {

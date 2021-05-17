@@ -32,7 +32,7 @@ export default {
             d1: false
         }
      },
-    props: ['label', 'value'],
+    props: ['label','value'],
     methods:{
         patch(){
            
@@ -42,6 +42,8 @@ export default {
         }
     },
     computed: {
+
+        
         hexValue()
         {
             const {r,g,b} = this.value

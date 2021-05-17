@@ -3,6 +3,7 @@
   
   <v-sheet color="grey lighten-2" >
     <v-container>
+      
     <h2>
     Create new document
     </h2>
@@ -13,7 +14,15 @@
  <v-btn to='app/table' height="150px" width="150px">
 
    <v-icon x-large>
-     mdi-plus 
+     mdi-play
+   </v-icon>
+  </v-btn>
+ </v-col>
+ <v-col cols=3>
+   <v-btn @click="blank" height="150px" width="150px">
+
+   <v-icon x-large>
+     mdi-plus
    </v-icon>
   </v-btn>
  </v-col>
@@ -28,9 +37,12 @@
    </template>
  <template v-slot>
    <v-text-field solo v-model="url" @keyup.enter="csv2json(url)">
-    
+    <v-btn text slot="append" @click="csv2json(url)">
+				Enter
+			</v-btn>	
      </v-text-field>
-     {{status}}
+      <v-progress-circular v-if="status==='Fetching'" indeterminate :size=20 > </v-progress-circular>{{status}}
+     
        </template>
  </dialog1>
  </v-col>
@@ -120,34 +132,32 @@ export default {
   },
   methods: {
     csv2json(url){
-      this.status="Fetching the file"
+      this.status="Fetching"
       fetch(url,{method: 'get', 
       headers: {
           'content-type': 'text/csv;charset=UTF-8'}
       }
       )
+      
+      .catch(err=>this.status=err)
       .then(response=>{if(response.status == 200)
       { this.status='Parsing'
         return response.text()
       }
-      else if(response.status == 404)
-      {
-        this.status = 'Not Found'
-        
-      }
-      else 
-      {
-        this.status = 'Fetch Failed'
-      }
+     
       })
-        .then(csv=>this.$store.commit('csv2json',csv))
+     .then(csv=>this.$store.commit('csv2json',csv))
+       
     
+    },
+    blank(){
+      this.$store.commit('blank')
     }
   },
   watch:{
     doneParsing(){
       if(this.doneParsing)
-      this.$router.push('/app/chart')     
+      this.$router.push('/app/table',()=>this.$store.commit('notDoneParsing'))     
     }
   },
   computed:{
@@ -159,6 +169,7 @@ export default {
   created()
   {
     this.$store.commit('notDoneParsing')
+    this.$store.commit('setIndex',null)
   }
 }
 </script>
