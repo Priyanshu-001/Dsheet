@@ -4,6 +4,8 @@ Data visualization platform, import, export, and visualizes CSV and provides bas
 ## Live demo
 http://dsheet.surge.sh/
 
+## Screenshots
+
 ## Project setup
 ```
 npm install
