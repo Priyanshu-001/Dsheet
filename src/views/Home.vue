@@ -19,6 +19,14 @@
   </v-btn>
  </v-col>
  <v-col cols=3>
+   <v-btn height="150px" width="150px" @click="uploadCSV">
+    <input type="file" hidden ref="uploadFile" accept=".csv" @change="generateCSVFromFile" />
+    <v-icon x-large>
+      mdi-upload
+    </v-icon>
+  </v-btn>
+ </v-col>
+ <v-col cols=3>
    <v-btn @click="blank" height="150px" width="150px">
 
    <v-icon x-large>
@@ -97,6 +105,7 @@
            Open
          </v-chip>
        </td>
+       
      </tr>
    </template>
      </tbody>
@@ -131,6 +140,15 @@ export default {
     dialog1
   },
   methods: {
+    generateCSVFromFile(e){
+        const file = e.target.files
+       console.log(URL.createObjectURL(file[0]))
+        file.length && this.csv2json(URL.createObjectURL(file[0]))
+    },
+    uploadCSV(){
+      
+      this.$refs.uploadFile.click();
+    },
     csv2json(url){
       this.status="Fetching"
       fetch(url,{method: 'get', 
