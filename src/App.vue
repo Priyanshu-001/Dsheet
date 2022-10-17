@@ -34,8 +34,14 @@
      
     <router-view/>
     
-     
+    
     </v-main>
+     <footer class="v-footer py-2 v-sheet theme--light v-footer--absolute grey lighten-2" id="foot" style="left: 0px; right: 0px; bottom: 0px;">
+      <v-spacer/>
+        <strong  class="subheading"><div align="center" style="padding-top: 4px;"> Made  by Priyanshu Ahuja 
+          <br>
+          <div  justify="baseline"><a  href="https://www.linkedin.com/in/priyanshuahuja/" style="color: black; text-decoration: none;">  <v-icon class="mdi mdi-linkedin"></v-icon> Contact </a></div></div></strong><v-spacer/>
+      </footer>
   </v-app>
 </template>
 <style scoped>
