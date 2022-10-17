@@ -29,7 +29,7 @@ export default new Vuex.Store({
       state.entries = []
     },
     csv2json: (state,csv)=>{
-      let rows = csv.split("\r\n")
+      let rows = csv.split("\n")
       let first =true
       let entries = []
       rows.forEach(r=>{
