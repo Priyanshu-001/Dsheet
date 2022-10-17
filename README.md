@@ -2,7 +2,7 @@
 Data visualization platform, import, export, and visualizes CSV and provides basic spreadsheet functions.
 
 ## Live demo
-http://dsheet.surge.sh/
+https://dsheet.netlify.app/
 
 
 
