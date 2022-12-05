@@ -43,7 +43,7 @@
      </v-icon>
     
    </template>
- <template v-slot>
+ <template>
    <v-text-field solo v-model="url" @keyup.enter="csv2json(url)">
     <v-btn text slot="append" @click="csv2json(url)">
 				Enter
@@ -53,6 +53,11 @@
      
        </template>
  </dialog1>
+ <dialog-1 :stay="true" v-model="doneParsing">
+    <template>
+        Processing CSV {{progress}}
+    </template>
+ </dialog-1>
  </v-col>
  
   </v-layout>
@@ -129,6 +134,7 @@ export default {
   name: 'Home',
   data: ()=> {
     return {url: '',
+
     status: '',
     links: [{name: 'Testing.csv', link: '/test.csv', source: 'https://vuetifyjs.com/en/components/data-tables/', sourceName:'Vuetify'},
             {name: 'Smartphone Shippment India.csv', link: '/smartphoneShippments.csv', source: 'https://www.statista.com/statistics/792767/india-smartphone-shipments-volume/', sourceName:'Statista'},
@@ -164,7 +170,7 @@ export default {
       }
      
       })
-     .then(csv=>this.$store.commit('csv2json',csv))
+     .then(csv=>this.$store.dispatch('csv2json',csv))
        
     
     },
@@ -179,14 +185,16 @@ export default {
     }
   },
   computed:{
-    
+    progress(){
+      return this.$store.state.progress
+    },
     doneParsing(){
       return this.$store.getters.doneParsing
     }
   },
   created()
   {
-    this.$store.commit('notDoneParsing')
+    // this.$store.commit('notDoneParsing')
     this.$store.commit('setIndex',null)
   }
 }

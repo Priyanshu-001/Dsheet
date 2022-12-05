@@ -1,8 +1,15 @@
-// import { entries, values } from 'core-js/core/array'
-//import { entries } from 'core-js/core/array'
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+// import csv2json from "../utils/csv2json"
+import { workerAdapter } from '../utils/WorkerAdapter'
+// import { createWorker } from '../utils/CreateWorker'
+
+// import Workerify from '../workers/Workerify'
+
+
+// console.log(asyncJson2Csv) 
 
 Vue.use(Vuex)
 export default new Vuex.Store({
@@ -10,6 +17,7 @@ export default new Vuex.Store({
     configData: {},
     index: null,
     doneParsing: true,
+    progress:'',
     colorObj: {},
     graphReady: true,
     colorArray: [],
@@ -18,6 +26,9 @@ export default new Vuex.Store({
     entries: []
   },
   mutations: {
+    updateProgress:(state,progress)=>{
+      state.progress = progress
+    },
     blank: (state)=>{
       state.configData={},
       state.index=null,
@@ -28,31 +39,10 @@ export default new Vuex.Store({
       state.headers=[],
       state.entries = []
     },
-    csv2json: (state,csv)=>{
-      let rows = csv.split("\n")
-      let first =true
-      let entries = []
-      rows.forEach(r=>{
-       
-        let row= r.split(',')
-        if(first)
-      {
-        state.headers = row.map(item=>{return {text: item, value: item} })
-        first = false
-        
-      }
-      else{
-      let entry = {}
-      let i=0
-      for( let header of state.headers)
-      {
-        entry[header.value] = row[i]
-        i+=1
-      }
-      entries.push(JSON.parse(JSON.stringify(entry)))
-
-      }})
-      state.entries = JSON.parse(JSON.stringify(entries))
+    csv2json: (state,data)=>{
+      const {headers,entries} = data
+      state.headers = headers
+      state.entries = entries
       state.doneParsing = true
       state.index=null
     
@@ -125,9 +115,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
+     csv2json: async (context,csv)=>{
+        context.commit('notDoneParsing')
+        const asyncJson2Csv = new Worker('../workers/csv2json.js', { type: 'module' });
+        asyncJson2Csv.postMessage(csv)
+        asyncJson2Csv.addEventListener('message',workerAdapter({running: progress=>context.commit('updateProgress',progress), done:data=>context.commit('csv2json',data)}))
+
+    },
     addEntry: (context)=>{
       context.commit('addEntry')
     },
+   
     addHeader: (s,header)=>{
      
       s.commit('addHeader',header)
